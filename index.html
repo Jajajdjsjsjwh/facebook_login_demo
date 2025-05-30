@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Facebook Login Example</title>
+</head>
+<body>
+    <h2>Facebook Login Demo</h2>
+    <fb:login-button 
+        scope="public_profile,email"
+        onlogin="checkLoginState();">
+    </fb:login-button>
+
+    <div id="status"></div>
+
+    <!-- Load Facebook SDK -->
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : 'YOUR_APP_ID',  // 🔁 Replace with your Facebook App ID
+          cookie     : true,
+          xfbml      : true,
+          version    : 'v19.0'         // 🔁 Use the latest Graph API version
+        });
+
+        FB.getLoginStatus(function(response) {
+          statusChangeCallback(response);
+        });
+      };
+
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "https://connect.facebook.net/en_US/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+
+      function statusChangeCallback(response) {
+        if (response.status === 'connected') {
+          FB.api('/me', { fields: 'name,email,picture' }, function(response) {
+            document.getElementById('status').innerHTML =
+              `<p>Welcome, ${response.name}</p>
+               <p>Email: ${response.email}</p>
+               <img src="${response.picture.data.url}" alt="Profile Picture"/>`;
+          });
+        } else {
+          document.getElementById('status').innerHTML = 'Please log into Facebook.';
+        }
+      }
+
+      function checkLoginState() {
+        FB.getLoginStatus(function(response) {
+          statusChangeCallback(response);
+        });
+      }
+    </script>
+</body>
+</html>
